@@ -1,0 +1,33 @@
+version: "3"
+services:
+    nginx:
+        container_name: reverse-proxy
+        image: nginx:1.19-alpine
+        volumes:
+            - ../nginx.conf:/etc/nginx/conf.d/default.conf
+        depends_on: 
+            - web
+            - api
+        ports:
+            - "80:80"
+        
+
+    web:
+        container_name: odds-finance-web
+        restart: always
+        build: ../../../cco-odds-installment-frontend
+        depends_on:
+            - api
+    
+    api:
+        container_name: odds-finance-api
+        restart: always
+        build: ../../../cco-odds-installment-backend
+        depends_on: 
+            - mongo
+        
+    mongo:
+        container_name: mongo
+        image: mongo:3.6
+        volumes:
+        - ../data:/data/db
